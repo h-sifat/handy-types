@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "testCov": "jest --coverage",
+    "test": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -16,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/h-sifat/handy-types/issues"
   },
-  "homepage": "https://github.com/h-sifat/handy-types#readme"
+  "homepage": "https://github.com/h-sifat/handy-types#readme",
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "jest": "^27.2.5",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.4.3"
+  }
 }
