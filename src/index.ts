@@ -5,8 +5,10 @@ type StringPredicate = TypePredicate<string>;
 type ObjectPredicate = TypePredicate<object>;
 type NullableObjectPredicate = TypePredicate<object | null>;
 type ArrayPredicate = TypePredicate<unknown[]>;
+type predicate = (v: any) => boolean;
 
 interface Types {
+  [key: string]: predicate;
   number: NumberPredicate;
   p_number: NumberPredicate;
   positive_number: NumberPredicate;
@@ -14,7 +16,6 @@ interface Types {
   negative_number: NumberPredicate;
   finite_num: NumberPredicate;
   natural_num: NumberPredicate;
-  bigint: NumberPredicate;
   int: NumberPredicate;
   p_int: NumberPredicate;
   positive_int: NumberPredicate;
@@ -92,7 +93,6 @@ types.positive_int = types.p_int;
 types.n_int = (v): v is number => types.int!(v) && v < 0;
 types.negative_int = types.n_int;
 types.natural_num = (v): v is number => types.int!(v) && v > 0;
-types.bigint = (v): v is number => typeof v === "bigint";
 types.odd = (v: number) => Math.abs(v % 2) === 1;
 types.even = (v: number) => v % 2 === 0;
 
@@ -169,7 +169,6 @@ let typeNames: TypeNames = {
   odd: "Odd Number",
   even: "Even Number",
   natural_num: "Natural Number",
-  bigint: "Big Integer",
 
   // String
   string: "String",
