@@ -1,7 +1,7 @@
 {
   "name": "handy-types",
   "version": "1.0.0",
-  "description": "A collection of small utility functions to check valiable types",
+  "description": "A collection of small utility functions to check variable types",
   "keywords": [
     "types",
     "validator",
