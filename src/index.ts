@@ -5,10 +5,9 @@ type StringPredicate = TypePredicate<string>;
 type ObjectPredicate = TypePredicate<object>;
 type NullableObjectPredicate = TypePredicate<object | null>;
 type ArrayPredicate = TypePredicate<unknown[]>;
-type predicate = (v: any) => boolean;
 
 interface Types {
-  [key: string]: predicate;
+  // Number types
   number: NumberPredicate;
   p_number: NumberPredicate;
   positive_number: NumberPredicate;
@@ -17,6 +16,7 @@ interface Types {
   finite_num: NumberPredicate;
   natural_num: NumberPredicate;
   int: NumberPredicate;
+  integer: NumberPredicate;
   p_int: NumberPredicate;
   positive_int: NumberPredicate;
   n_int: NumberPredicate;
@@ -24,6 +24,14 @@ interface Types {
   odd: (v: number) => boolean;
   even: (v: number) => boolean;
   safe_int: NumberPredicate;
+
+  // Byte wise int
+  int8: NumberPredicate;
+  uint8: NumberPredicate;
+  int16: NumberPredicate;
+  uint16: NumberPredicate;
+  int32: NumberPredicate;
+  uint32: NumberPredicate;
 
   // String types
   string: StringPredicate;
@@ -87,6 +95,7 @@ types.finite_num = (v): v is number => Number.isFinite(v);
 
 // Integer Types ===============
 types.int = (v): v is number => Number.isInteger(v);
+types.integer = types.int;
 types.safe_int = (v): v is number => Number.isSafeInteger(v);
 types.p_int = (v): v is number => types.int!(v) && v > -1;
 types.positive_int = types.p_int;
@@ -95,6 +104,19 @@ types.negative_int = types.n_int;
 types.natural_num = (v): v is number => types.int!(v) && v > 0;
 types.odd = (v: number) => Math.abs(v % 2) === 1;
 types.even = (v: number) => v % 2 === 0;
+
+// byte wise integer
+types.int8 = (v: unknown): v is number =>
+  types.int!(v) && v >= -128 && v <= 127;
+types.uint8 = (v: unknown): v is number => types.int!(v) && v >= 0 && v <= 255;
+types.int16 = (v: unknown): v is number =>
+  types.int!(v) && v >= -32768 && v <= 32767;
+types.uint16 = (v: unknown): v is number =>
+  types.int!(v) && v >= 0 && v <= 65535;
+types.int32 = (v: unknown): v is number =>
+  types.int!(v) && v >= -2147483648 && v <= 2147483647;
+types.uint32 = (v: unknown): v is number =>
+  types.int!(v) && v >= 0 && v <= 4294967295;
 
 // String Types ----------------------------------------------------------------
 types.string = (v): v is string => typeof v === "string";
@@ -160,6 +182,7 @@ let typeNames: TypeNames = {
   finite_num: "Finite Number",
 
   // Integer
+  integer: "Integer",
   int: "Integer",
   safe_int: "Safe Integer",
   p_int: "Positive Integer",
@@ -169,6 +192,14 @@ let typeNames: TypeNames = {
   odd: "Odd Number",
   even: "Even Number",
   natural_num: "Natural Number",
+
+  // Byte wise integer
+  int8: "8 Bit Integer",
+  uint8: "8 Bit Unsigned Integer",
+  int16: "16 Bit Integer",
+  uint16: "16 Bit Unsigned Integer",
+  int32: "32 Bit Integer",
+  uint32: "32 Bit Unsigned Integer",
 
   // String
   string: "String",
@@ -220,7 +251,10 @@ let typeNames: TypeNames = {
   NaN: "NaN",
 };
 
-const frozenTypeObject = Object.freeze(types) as Readonly<Types>;
+type ReadonlyTypes = Readonly<Types> & {
+  [key: string]: (v: unknown) => boolean;
+};
+const frozenTypeObject = Object.freeze(types) as ReadonlyTypes;
 typeNames = Object.freeze(typeNames);
 
 export { frozenTypeObject as types };

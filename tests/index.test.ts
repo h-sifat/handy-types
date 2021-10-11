@@ -31,9 +31,39 @@ const testData = [
     invalidValues: [1.1, 0.11],
   },
   {
+    typeName: "int8",
+    validValues: [-128, 127],
+    invalidValues: [-129, 128],
+  },
+  {
+    typeName: "uint8",
+    validValues: [0, 255],
+    invalidValues: [-1, 256],
+  },
+  {
+    typeName: "int16",
+    validValues: [-32768, 32767],
+    invalidValues: [-32769, 32768],
+  },
+  {
+    typeName: "uint16",
+    validValues: [0, 65535],
+    invalidValues: [-1, 65536],
+  },
+  {
+    typeName: "int32",
+    validValues: [-2147483648, 2147483647],
+    invalidValues: [-2147483649, 2147483648],
+  },
+  {
+    typeName: "uint32",
+    validValues: [0, 4294967295],
+    invalidValues: [-1, 4294967296],
+  },
+  {
     typeName: "safe_int",
     validValues: [1, 2, 0, -1, -2, 2.0, 9999999],
-    invalidValues: [1.1, 0.11, 9999999999999999999],
+    invalidValues: [1.1, 0.11, 99999999999999999999999999999],
   },
   {
     typeName: "p_int",
