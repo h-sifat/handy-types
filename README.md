@@ -3,7 +3,8 @@ A small library to check variable types. It consists of many utility functions
 like `int`, `positive_int`, `array`, `non_empty_array` and many more. Every
 **type**(*function*) has their full name in case you want to write a meaningful
 error message. The library is fully tested so it has **100%** test coverage. It
-uses the **UMD** module system so it supports every javascript environment.
+uses the **UMD** module system so it supports every JavaScript environment that
+uses any kind JavaScript of module system.
 
 ## Example
 
@@ -21,7 +22,7 @@ All the available types are listed below.
 ## Number Types
 Type | Full Name | Alias
 ---- | -------- | -----
-number | Number
+number | Number | num
 finite_num | Finite Number
 positive_number | Positive Number | p_number 
 negative_number | Negative Number | n_number 
@@ -36,6 +37,30 @@ even | Even Number
 natural_num | Natural Number
 positive_int | Positive Integer | p_int 
 negative_int | Negative Integer | n_int 
+
+__Note:__  For `even` and `odd` type you must pass an __integer__ to them
+otherwise you may get wrong result in the following case.
+```js
+const num = 4.32;
+
+if(types.even(num)) {
+  // num is even
+} else {
+  // But here num is not necessarily odd
+}
+```
+So if we can make sure that _num_ is an integer then we'll get predicted results.
+```js
+const num = 4.32;
+
+if(types.int(num)) {
+  if(types.even(num)) {
+    // num is even
+  } else {
+    // num is odd
+  }
+}
+```
 
 ## Primitive Integer
 Type | Full Name | Range
@@ -115,4 +140,5 @@ Type | Full Name | Alias
 defined | Defined
 any | Any
 
-If you find any bug or want to add a new type feel free to make a pull request.
+If you find a bug or want to add a new type feel free to make a pull
+request :)

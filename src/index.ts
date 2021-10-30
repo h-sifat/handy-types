@@ -9,6 +9,7 @@ type ArrayPredicate = TypePredicate<unknown[]>;
 interface Types {
   // Number types
   number: NumberPredicate;
+  num: NumberPredicate;
   p_number: NumberPredicate;
   positive_number: NumberPredicate;
   n_number: NumberPredicate;
@@ -87,6 +88,7 @@ const types: Partial<Types> = {};
 
 // Number Types ----------------------------------------------------------------
 types.number = (v): v is number => typeof v === "number" && !Number.isNaN(v);
+types.num = types.number;
 types.p_number = (v): v is number => types.number!(v) && v >= 0;
 types.positive_number = types.p_number;
 types.n_number = (v): v is number => types.number!(v) && v < 0;
@@ -175,6 +177,7 @@ type TypeNames = Readonly<Record<keyof Types, string>>;
 let typeNames: TypeNames = {
   // Number
   number: "Number",
+  num: "Number",
   p_number: "Positive Number",
   positive_number: "Positive Number",
   n_number: "Negative Number",

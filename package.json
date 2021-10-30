@@ -1,6 +1,6 @@
 {
   "name": "handy-types",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A collection of small utility functions to check variable types",
   "keywords": [
     "types",
@@ -25,10 +25,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "testCov": "jest --coverage",
-    "prepublishOnly": "tsc",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm test && tsc",
     "prepack": "tsc",
-    "test": "jest --watch"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "files": [
     "dist"
