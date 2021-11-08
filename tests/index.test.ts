@@ -238,6 +238,11 @@ const testData = [
     validValues: [1, "a", {}, null, undefined, 0, []],
     invalidValues: [],
   },
+  {
+    typeName: "nullish",
+    validValues: [null, undefined],
+    invalidValues: [false, 0, NaN, "", "hey", {}],
+  },
 ];
 
 describe.each(testData)(

@@ -5,6 +5,7 @@ type StringPredicate = TypePredicate<string>;
 type ObjectPredicate = TypePredicate<object>;
 type NullableObjectPredicate = TypePredicate<object | null>;
 type ArrayPredicate = TypePredicate<unknown[]>;
+type Nullish = undefined | null;
 
 interface Types {
   // Number types
@@ -36,8 +37,8 @@ interface Types {
 
   // String types
   string: StringPredicate;
-  es: StringPredicate;
-  empty_string: StringPredicate;
+  es: TypePredicate<"">;
+  empty_string: TypePredicate<"">;
   ne_string: StringPredicate;
   non_empty_string: StringPredicate;
 
@@ -82,6 +83,7 @@ interface Types {
   // Other types
   defined: (v: unknown) => boolean;
   any: (v: unknown) => true;
+  nullish: TypePredicate<Nullish>;
 }
 
 const types: Partial<Types> = {};
@@ -122,7 +124,7 @@ types.uint32 = (v: unknown): v is number =>
 
 // String Types ----------------------------------------------------------------
 types.string = (v): v is string => typeof v === "string";
-types.es = (v): v is string => v === "";
+types.es = (v): v is "" => v === "";
 types.empty_string = types.es;
 types.ne_string = (v): v is string => types.string!(v) && v !== "";
 types.non_empty_string = types.ne_string;
@@ -170,6 +172,7 @@ types.truthy = (v) => !!v === true;
 types.falsy = (v) => !!v === false;
 types.defined = (v) => v !== undefined;
 types.any = () => true;
+types.nullish = (v: unknown): v is Nullish => v === undefined || v === null;
 
 // ---------------------------- Type Names -------------------------------------
 type TypeNames = Readonly<Record<keyof Types, string>>;
@@ -245,6 +248,7 @@ let typeNames: TypeNames = {
   // Other
   defined: "Defined",
   any: "Any",
+  nullish: "Nullish",
 
   // Constants
   undefined: "Undefined",

@@ -139,6 +139,7 @@ Type | Full Name | Alias
 ---- | -------- | -----
 defined | Defined
 any | Any
+nullish | Nullish
 
 If you find a bug or want to add a new type feel free to make a pull
 request :)

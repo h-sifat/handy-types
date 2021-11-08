@@ -1,5 +1,10 @@
 Changelog
 =========
+v1.3.0
+------
+- Added "nullish" type
+- Fixed type annotation for "empty_string"
+
 1.2.0
 -----
 - Added alias "num"
