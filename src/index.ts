@@ -11,21 +11,41 @@ interface Types {
   // Number types
   number: NumberPredicate;
   num: NumberPredicate;
+
   p_number: NumberPredicate;
   positive_number: NumberPredicate;
+
+  strict_positive_number: NumberPredicate;
+  sp_number: NumberPredicate;
+
   n_number: NumberPredicate;
   negative_number: NumberPredicate;
+
+  non_positive_number: NumberPredicate;
+  np_number: NumberPredicate;
+
   finite_num: NumberPredicate;
-  natural_num: NumberPredicate;
+
+  // Integer Types
   int: NumberPredicate;
   integer: NumberPredicate;
+  safe_int: NumberPredicate;
+
   p_int: NumberPredicate;
   positive_int: NumberPredicate;
+
+  strict_positive_int: NumberPredicate;
+  sp_int: NumberPredicate;
+  natural_num: NumberPredicate;
+
   n_int: NumberPredicate;
   negative_int: NumberPredicate;
+
+  non_positive_int: NumberPredicate;
+  np_int: NumberPredicate;
+
   odd: (v: number) => boolean;
   even: (v: number) => boolean;
-  safe_int: NumberPredicate;
 
   // Byte wise int
   int8: NumberPredicate;
@@ -91,22 +111,40 @@ const types: Partial<Types> = {};
 // Number Types ----------------------------------------------------------------
 types.number = (v): v is number => typeof v === "number" && !Number.isNaN(v);
 types.num = types.number;
-types.p_number = (v): v is number => types.number!(v) && v >= 0;
+
 types.positive_number = types.p_number;
-types.n_number = (v): v is number => types.number!(v) && v < 0;
+types.p_number = (v): v is number => types.number!(v) && v >= 0;
+
+types.strict_positive_number = (v): v is number => types.number!(v) && v > 0;
+types.sp_number = types.strict_positive_number;
+
 types.negative_number = types.n_number;
+types.n_number = (v): v is number => types.number!(v) && v < 0;
+
+types.non_positive_number = (v): v is number => types.number!(v) && v <= 0;
+types.np_number = types.non_positive_number;
+
 types.finite_num = (v): v is number => Number.isFinite(v);
 
 // Integer Types ===============
 types.int = (v): v is number => Number.isInteger(v);
 types.integer = types.int;
 types.safe_int = (v): v is number => Number.isSafeInteger(v);
+
 types.p_int = (v): v is number => types.int!(v) && v > -1;
 types.positive_int = types.p_int;
+
 types.n_int = (v): v is number => types.int!(v) && v < 0;
 types.negative_int = types.n_int;
-types.natural_num = (v): v is number => types.int!(v) && v > 0;
-types.odd = (v: number) => Math.abs(v % 2) === 1;
+
+types.non_positive_int = (v): v is number => types.int!(v) && v < 1;
+types.np_int = types.non_positive_int;
+
+types.strict_positive_int = (v): v is number => types.int!(v) && v > 0;
+types.natural_num = types.strict_positive_int;
+types.sp_int = types.strict_positive_int;
+
+types.odd = (v: number) => v % 2 !== 0;
 types.even = (v: number) => v % 2 === 0;
 
 // byte wise integer
@@ -181,23 +219,40 @@ let typeNames: TypeNames = {
   // Number
   number: "Number",
   num: "Number",
+  finite_num: "Finite Number",
+
   p_number: "Positive Number",
   positive_number: "Positive Number",
+
+  strict_positive_number: "Strict Positive Number",
+  sp_number: "Strict Positive Number",
+
   n_number: "Negative Number",
   negative_number: "Negative Number",
-  finite_num: "Finite Number",
+
+  non_positive_number: "Non Positive Number",
+  np_number: "Non Positive Number",
 
   // Integer
   integer: "Integer",
   int: "Integer",
   safe_int: "Safe Integer",
+
   p_int: "Positive Integer",
   positive_int: "Positive Integer",
+
+  strict_positive_int: "Strict Positive Integer",
+  sp_int: "Strict Positive Integer",
+  natural_num: "Natural Number",
+
   n_int: "Negative Integer",
   negative_int: "Negative Integer",
+
+  non_positive_int: "Non Positive Integer",
+  np_int: "Non Positive Integer",
+
   odd: "Odd Number",
   even: "Even Number",
-  natural_num: "Natural Number",
 
   // Byte wise integer
   int8: "8 Bit Integer",

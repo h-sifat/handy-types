@@ -13,11 +13,20 @@ const testData = [
     invalidValues: [-1, -0.000000002],
   },
   {
+    typeName: "sp_number",
+    validValues: [1, 0.0000000001, 2],
+    invalidValues: [-1, -0.000000002, 0],
+  },
+  {
     typeName: "n_number",
     validValues: [-1, -0.000000002],
     invalidValues: [0, 1, 0.0000000001],
   },
-
+  {
+    typeName: "np_number",
+    validValues: [0, -1, -0.000000002],
+    invalidValues: [1, 0.0000000001],
+  },
   {
     typeName: "finite_num",
     validValues: [1, 0, 9999999],
@@ -71,14 +80,19 @@ const testData = [
     invalidValues: [-1, -2, -3],
   },
   {
+    typeName: "sp_int",
+    validValues: [1, 2, 3],
+    invalidValues: [0, -1, -2, -3],
+  },
+  {
     typeName: "n_int",
     validValues: [-1, -2, -3],
     invalidValues: [0, 1, 3],
   },
   {
-    typeName: "natural_num",
-    validValues: [1, 2, 3],
-    invalidValues: [0, -1, -2],
+    typeName: "np_int",
+    validValues: [0, -1, -2, -3],
+    invalidValues: [1, 3],
   },
   {
     typeName: "odd",

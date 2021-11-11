@@ -19,24 +19,32 @@ if(!types.ne_object(obj)) // or use the long form: types.non_empty_object(obj)
 ```
 All the available types are listed below.
 
+__Note:__ I didn't follow strict mathematical definition for _positive_ and
+_negative_ numbers. From mathematical perspective all the `"positive_<type>"`
+used here should be called `"non_negative_<type>"`. So be sure to check all the
+types before using them.
+
 ## Number Types
-Type | Full Name | Alias
----- | -------- | -----
-number | Number | num
-finite_num | Finite Number
-positive_number | Positive Number | p_number 
-negative_number | Negative Number | n_number 
+Type | Full Name | Alias | Implementation
+---- | -------- | ------ | -----------
+number | Number | num | `typeof n === "number" && !Number.isNaN(n)`
+finite_num | Finite Number |  |`Number.isFinite(n)` 
+positive_number | Positive Number | p_number | `n >= 0`
+strict_positive_number | Strict Positive Number | sp_number | `n > 0`
+negative_number | Negative Number | n_number | `n < 0`
+non_positive_number | Non Positive Number | np_number | `n <= 0`
 
 ## Integer Types
-Type | Full Name | Alias
----- | -------- | -----
-integer | Integer | int
-safe_int | Safe Integer
-odd | Odd Number
-even | Even Number
-natural_num | Natural Number
-positive_int | Positive Integer | p_int 
-negative_int | Negative Integer | n_int 
+Type | Full Name | Alias | Implementation
+---- | -------- | ----- | ---------------
+integer | Integer | int | `Number.isInteger(n)`
+safe_int | Safe Integer | | `Number.isSafeInteger(n)`
+positive_int | Positive Integer | p_int  | `integer >= 0`
+strict_positive_int | Strict Positive Integer, Natural Number | natural_num, sp_int | `integer > 0`
+negative_int | Negative Integer | n_int  | `integer < 0`
+non_positive_int | Non Positive Integer | np_int  | `integer <= 0`
+odd | Odd Number | | `Math.abs(n % 2) === 1`
+even | Even Number | | `n % 2 === 0`
 
 __Note:__  For `even` and `odd` type you must pass an __integer__ to them
 otherwise you may get wrong result in the following case.
@@ -60,7 +68,15 @@ if(types.int(num)) {
     // num is odd
   }
 }
+
+// Or always check for both cases
+if(types.even(num)) {
+  // num is even
+} else if(types.odd(num)) {
+  // num is odd
+}
 ```
+
 
 ## Primitive Integer
 Type | Full Name | Range
@@ -106,15 +122,10 @@ set | Set
 map | Map
 
 
-## Function Type
+## Other Native Types
 Type | Full Name | Alias
 ---- | -------- | -----
 function | Function
-
-
-## Symbol Type
-Type | Full Name | Alias
----- | -------- | -----
 symbol | Symbol
 
 
