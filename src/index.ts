@@ -1,323 +1,319 @@
-type TypePredicate<Type> = (v: unknown) => v is Type;
+type AllBasicTypes =
+  | boolean
+  | number
+  | string
+  | symbol
+  | bigint
+  | object
+  | undefined
+  | null // I know that null is not a type
+  | Function;
 
-type NumberPredicate = TypePredicate<number>;
-type StringPredicate = TypePredicate<string>;
-type ObjectPredicate = TypePredicate<object>;
-type NullableObjectPredicate = TypePredicate<object | null>;
-type ArrayPredicate = TypePredicate<unknown[]>;
-type Nullish = undefined | null;
+const allTypeCategories = Object.freeze([
+  "undefined",
+  "boolean",
+  "number",
+  "string",
+  "symbol",
+  "object",
+  "array",
+  "function",
+  "other",
+  "bigint",
+] as const);
+
+type TypePredicate<Type, Category extends typeof allTypeCategories[number]> = {
+  (v: unknown): v is Type;
+  category: Category;
+};
+
+type NumberPredicate = TypePredicate<number, "number">;
+type StringPredicate = TypePredicate<string, "string">;
+type ObjectPredicate = TypePredicate<object, "object">;
+type ArrayPredicate = TypePredicate<unknown[], "array">;
+type NullableObjectPredicate = TypePredicate<object | null, "object">;
+
+type NullishValue = undefined | null;
 
 interface Types {
-  // Number types
+  // Base types
+  undefined: TypePredicate<undefined, "undefined">;
+  boolean: TypePredicate<boolean, "boolean">;
   number: NumberPredicate;
-  num: NumberPredicate;
+  big_integer: TypePredicate<BigInt, "bigint">;
+  symbol: TypePredicate<Symbol, "symbol">;
+  string: StringPredicate;
+  object: NullableObjectPredicate;
+  function: TypePredicate<Function, "function">;
 
-  p_number: NumberPredicate;
+  // Number types
+  finite_number: NumberPredicate;
+
   positive_number: NumberPredicate;
+  non_negative_number: NumberPredicate;
 
-  strict_positive_number: NumberPredicate;
-  sp_number: NumberPredicate;
-
-  n_number: NumberPredicate;
   negative_number: NumberPredicate;
-
   non_positive_number: NumberPredicate;
-  np_number: NumberPredicate;
-
-  finite_num: NumberPredicate;
 
   // Integer Types
-  int: NumberPredicate;
   integer: NumberPredicate;
-  safe_int: NumberPredicate;
+  safe_integer: NumberPredicate;
 
-  p_int: NumberPredicate;
-  positive_int: NumberPredicate;
+  positive_integer: NumberPredicate;
+  non_negative_integer: NumberPredicate;
 
-  strict_positive_int: NumberPredicate;
-  sp_int: NumberPredicate;
-  natural_num: NumberPredicate;
-
-  n_int: NumberPredicate;
-  negative_int: NumberPredicate;
-
-  non_positive_int: NumberPredicate;
-  np_int: NumberPredicate;
-
-  odd: (v: number) => boolean;
-  even: (v: number) => boolean;
+  negative_integer: NumberPredicate;
+  non_positive_integer: NumberPredicate;
 
   // Byte wise int
-  int8: NumberPredicate;
-  uint8: NumberPredicate;
-  int16: NumberPredicate;
-  uint16: NumberPredicate;
-  int32: NumberPredicate;
-  uint32: NumberPredicate;
+  "8bit_integer": NumberPredicate;
+  "8bit_unsigned_integer": NumberPredicate;
+  "16bit_integer": NumberPredicate;
+  "16bit_unsigned_integer": NumberPredicate;
+  "32bit_integer": NumberPredicate;
+  "32bit_unsigned_integer": NumberPredicate;
 
   // String types
-  string: StringPredicate;
-  es: TypePredicate<"">;
-  empty_string: TypePredicate<"">;
-  ne_string: StringPredicate;
   non_empty_string: StringPredicate;
 
   // Array Types
   array: ArrayPredicate;
-  ea: ArrayPredicate;
-  empty_array: ArrayPredicate;
-  ne_array: ArrayPredicate;
   non_empty_array: ArrayPredicate;
 
   // Object Types
-  object: NullableObjectPredicate;
-  nn_object: ObjectPredicate;
+  plain_object: ObjectPredicate;
   non_null_object: ObjectPredicate;
-  ne_object: ObjectPredicate;
-  non_empty_object: ObjectPredicate;
-  eo: ObjectPredicate;
-  empty_object: ObjectPredicate;
-
-  // Global Objects
-  regex: TypePredicate<RegExp>;
-  date: TypePredicate<Date>;
-  set: TypePredicate<Set<unknown>>;
-  map: TypePredicate<Map<unknown, unknown>>;
-  function: TypePredicate<Function>;
-
-  // Symbol Type
-  symbol: TypePredicate<Symbol>;
-
-  // Boolean Type
-  boolean: TypePredicate<boolean>;
-  truthy: (v: unknown) => boolean;
-  falsy: (v: unknown) => boolean;
-
-  // Constant Type
-  true: TypePredicate<true>;
-  false: TypePredicate<false>;
-  undefined: TypePredicate<undefined>;
-  null: TypePredicate<null>;
-  NaN: TypePredicate<typeof NaN>;
 
   // Other types
-  defined: (v: unknown) => boolean;
-  any: (v: unknown) => true;
-  nullish: TypePredicate<Nullish>;
+  any: TypePredicate<any, "other">;
+  nan: TypePredicate<typeof NaN, "other">;
+  nullish: TypePredicate<NullishValue, "other">;
+  non_nullish: {
+    (v: AllBasicTypes): v is Exclude<AllBasicTypes, NullishValue>;
+    category: "other";
+  };
 }
 
 const types: Partial<Types> = {};
 
-// Number Types ----------------------------------------------------------------
-types.number = (v): v is number => typeof v === "number" && !Number.isNaN(v);
-types.num = types.number;
+// Implementation -------------------------------------------------------------
+types.undefined = Object.assign(
+  (v: unknown): v is undefined => typeof v === "undefined",
+  { category: "undefined" } as const
+);
 
-types.positive_number = types.p_number;
-types.p_number = (v): v is number => types.number!(v) && v >= 0;
+types.number = Object.assign(
+  (v: unknown): v is number => typeof v === "number" && !Number.isNaN(v),
+  { category: "number" } as const
+);
+types.positive_number = Object.assign(
+  (v: unknown): v is number => types.number!(v) && v > 0,
+  { category: "number" } as const
+);
 
-types.strict_positive_number = (v): v is number => types.number!(v) && v > 0;
-types.sp_number = types.strict_positive_number;
+types.non_negative_number = Object.assign(
+  (v: unknown): v is number => types.number!(v) && v >= 0,
+  { category: "number" } as const
+);
 
-types.negative_number = types.n_number;
-types.n_number = (v): v is number => types.number!(v) && v < 0;
+types.negative_number = Object.assign(
+  (v: unknown): v is number => types.number!(v) && v < 0,
+  { category: "number" } as const
+);
 
-types.non_positive_number = (v): v is number => types.number!(v) && v <= 0;
-types.np_number = types.non_positive_number;
+types.non_positive_number = Object.assign(
+  (v: unknown): v is number => types.number!(v) && v <= 0,
+  { category: "number" } as const
+);
 
-types.finite_num = (v): v is number => Number.isFinite(v);
+types.finite_number = Object.assign(
+  (v: unknown): v is number => Number.isFinite(v),
+  { category: "number" } as const
+);
 
 // Integer Types ===============
-types.int = (v): v is number => Number.isInteger(v);
-types.integer = types.int;
-types.safe_int = (v): v is number => Number.isSafeInteger(v);
+types.integer = Object.assign(
+  (v: unknown): v is number => Number.isInteger(v),
+  { category: "number" } as const
+);
+types.safe_integer = Object.assign(
+  (v: unknown): v is number => Number.isSafeInteger(v),
+  { category: "number" } as const
+);
 
-types.p_int = (v): v is number => types.int!(v) && v > -1;
-types.positive_int = types.p_int;
+types.big_integer = Object.assign(
+  (v: unknown): v is BigInt => typeof v === "bigint",
+  { category: "bigint" } as const
+);
 
-types.n_int = (v): v is number => types.int!(v) && v < 0;
-types.negative_int = types.n_int;
+types.positive_integer = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v > 0,
+  { category: "number" } as const
+);
 
-types.non_positive_int = (v): v is number => types.int!(v) && v < 1;
-types.np_int = types.non_positive_int;
+types.negative_integer = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v < 0,
+  { category: "number" } as const
+);
 
-types.strict_positive_int = (v): v is number => types.int!(v) && v > 0;
-types.natural_num = types.strict_positive_int;
-types.sp_int = types.strict_positive_int;
+types.non_positive_integer = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v < 1,
+  { category: "number" } as const
+);
 
-types.odd = (v: number) => v % 2 !== 0;
-types.even = (v: number) => v % 2 === 0;
+types.non_negative_integer = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= 0,
+  { category: "number" } as const
+);
 
 // byte wise integer
-types.int8 = (v: unknown): v is number =>
-  types.int!(v) && v >= -128 && v <= 127;
-types.uint8 = (v: unknown): v is number => types.int!(v) && v >= 0 && v <= 255;
-types.int16 = (v: unknown): v is number =>
-  types.int!(v) && v >= -32768 && v <= 32767;
-types.uint16 = (v: unknown): v is number =>
-  types.int!(v) && v >= 0 && v <= 65535;
-types.int32 = (v: unknown): v is number =>
-  types.int!(v) && v >= -2147483648 && v <= 2147483647;
-types.uint32 = (v: unknown): v is number =>
-  types.int!(v) && v >= 0 && v <= 4294967295;
+types["8bit_integer"] = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= -128 && v <= 127,
+  { category: "number" } as const
+);
+
+types["8bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 255,
+  { category: "number" } as const
+);
+
+types["16bit_integer"] = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= -32768 && v <= 32767,
+  { category: "number" } as const
+);
+
+types["16bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 65535,
+  { category: "number" } as const
+);
+
+types["32bit_integer"] = Object.assign(
+  (v: unknown): v is number =>
+    types.integer!(v) && v >= -2147483648 && v <= 2147483647,
+  { category: "number" } as const
+);
+
+types["32bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 4294967295,
+  { category: "number" } as const
+);
 
 // String Types ----------------------------------------------------------------
-types.string = (v): v is string => typeof v === "string";
-types.es = (v): v is "" => v === "";
-types.empty_string = types.es;
-types.ne_string = (v): v is string => types.string!(v) && v !== "";
-types.non_empty_string = types.ne_string;
+types.string = Object.assign(
+  (v: unknown): v is string => typeof v === "string",
+  { category: "string" } as const
+);
+types.non_empty_string = Object.assign(
+  (v: unknown): v is string => types.string!(v) && v !== "",
+  { category: "string" } as const
+);
 
 // Object Types ----------------------------------------------------------------
-types.object = (v): v is object | null => typeof v === "object";
-types.nn_object = (v): v is object => v !== null && types.object!(v);
-types.non_null_object = types.nn_object;
-types.ne_object = (v): v is object =>
-  types.nn_object!(v) && Object.keys(v).length > 0;
-types.non_empty_object = types.ne_object;
-types.eo = (v): v is object =>
-  types.nn_object!(v) && Object.keys(v).length === 0;
-types.empty_object = types.eo;
+types.object = Object.assign(
+  (v: unknown): v is object | null => typeof v === "object",
+  { category: "object" } as const
+);
+types.non_null_object = Object.assign(
+  (v: unknown): v is object => v !== null && types.object!(v),
+  { category: "object" } as const
+);
+types.plain_object = Object.assign(
+  (v: unknown): v is object => types.non_null_object!(v) && !Array.isArray(v),
+  { category: "object" } as const
+);
 
 // Array Types -----------------------------------------------------------------
-types.array = (v): v is unknown[] => Array.isArray(v);
-types.ea = (v): v is unknown[] => types.array!(v) && v.length === 0;
-types.empty_array = types.ea;
-types.ne_array = (v): v is unknown[] => types.array!(v) && v.length > 0;
-types.non_empty_array = types.ne_array;
+types.array = Object.assign((v: unknown): v is unknown[] => Array.isArray(v), {
+  category: "array",
+} as const);
+types.non_empty_array = Object.assign(
+  (v: unknown): v is unknown[] => types.array!(v) && v.length > 0,
+  { category: "array" } as const
+);
 
-// Global Object Types ---------------------------------------------------------
-types.regex = (v): v is RegExp => v instanceof RegExp;
-types.date = (v): v is Date => v instanceof Date;
-types.set = (v): v is Set<unknown> => v instanceof Set;
-types.map = (v): v is Map<unknown, unknown> => v instanceof Map;
-types.function = (v): v is Function => typeof v === "function";
+types.function = Object.assign(
+  (v: unknown): v is Function => typeof v === "function",
+  { category: "function" } as const
+);
+types.symbol = Object.assign(
+  (v: unknown): v is Symbol => typeof v === "symbol",
+  { category: "symbol" } as const
+);
+types.boolean = Object.assign(
+  (v: unknown): v is boolean => typeof v === "boolean",
+  { category: "boolean" } as const
+);
 
-// Global Object Types ---------------------------------------------------------
-types.symbol = (v): v is Symbol => typeof v === "symbol";
-
-// Boolean Types ---------------------------------------------------------------
-types.boolean = (v): v is boolean => typeof v === "boolean";
-
-// Constants Types -------------------------------------------------------------
-types.true = (v): v is true => v === true;
-types.false = (v): v is false => v === false;
-types.undefined = (v): v is undefined => v === undefined;
-types.null = (v): v is null => v === null;
-types.NaN = (v): v is typeof NaN => Number.isNaN(v);
+types.nan = Object.assign((v: unknown): v is typeof NaN => Number.isNaN(v), {
+  category: "other",
+} as const);
 
 // Other Types  ----------------------------------------------------------------
-types.truthy = (v) => !!v === true;
-types.falsy = (v) => !!v === false;
-types.defined = (v) => v !== undefined;
-types.any = () => true;
-types.nullish = (v: unknown): v is Nullish => v === undefined || v === null;
+types.any = Object.assign((v: unknown): v is any => true, {
+  category: "other",
+} as const);
+types.nullish = Object.assign(
+  (v: unknown): v is NullishValue => v === undefined || v === null,
+  { category: "other" } as const
+);
+types.non_nullish = Object.assign(
+  (v: unknown): v is Exclude<AllBasicTypes, NullishValue> => !types.nullish!(v),
+  { category: "other" } as const
+);
 
 // ---------------------------- Type Names -------------------------------------
 type TypeNames = Readonly<Record<keyof Types, string>>;
 
-let typeNames: TypeNames = {
-  // Number
+const typeNames: TypeNames = {
+  // Base Types
+  undefined: "Undefined",
+  boolean: "Boolean",
   number: "Number",
-  num: "Number",
-  finite_num: "Finite Number",
-
-  p_number: "Positive Number",
-  positive_number: "Positive Number",
-
-  strict_positive_number: "Strict Positive Number",
-  sp_number: "Strict Positive Number",
-
-  n_number: "Negative Number",
-  negative_number: "Negative Number",
-
-  non_positive_number: "Non Positive Number",
-  np_number: "Non Positive Number",
-
-  // Integer
-  integer: "Integer",
-  int: "Integer",
-  safe_int: "Safe Integer",
-
-  p_int: "Positive Integer",
-  positive_int: "Positive Integer",
-
-  strict_positive_int: "Strict Positive Integer",
-  sp_int: "Strict Positive Integer",
-  natural_num: "Natural Number",
-
-  n_int: "Negative Integer",
-  negative_int: "Negative Integer",
-
-  non_positive_int: "Non Positive Integer",
-  np_int: "Non Positive Integer",
-
-  odd: "Odd Number",
-  even: "Even Number",
-
-  // Byte wise integer
-  int8: "8 Bit Integer",
-  uint8: "8 Bit Unsigned Integer",
-  int16: "16 Bit Integer",
-  uint16: "16 Bit Unsigned Integer",
-  int32: "32 Bit Integer",
-  uint32: "32 Bit Unsigned Integer",
-
-  // String
+  big_integer: "Big Integer",
+  symbol: "Symbol",
   string: "String",
-  es: "Empty String",
-  empty_string: "Empty String",
-  ne_string: "Non-Empty String",
-  non_empty_string: "Non-Empty String",
-
-  // Object
   object: "Object",
-  eo: "Empty Object",
-  empty_object: "Empty Object",
-  nn_object: "Non-Null Object",
-  non_null_object: "Non-Null Object",
-  ne_object: "Non-Empty Object",
-  non_empty_object: "Non-Empty Object",
-
-  // Array
-  array: "Array",
-  ea: "Empty Array",
-  empty_array: "Empty Array",
-  ne_array: "Non-Empty Array",
-  non_empty_array: "Non-Empty Array",
-
-  // Global objects
-  set: "Set",
-  map: "Map",
-  regex: "Regular Expression",
-  date: "Date",
   function: "Function",
 
-  // Symbol
-  symbol: "Symbol",
+  finite_number: "Finite Number",
 
-  // Boolean
-  boolean: "Boolean",
-  truthy: "Truthy",
-  falsy: "Falsy",
+  positive_number: "Positive Number",
+  non_negative_number: "Non Negative Number",
 
-  // Other
-  defined: "Defined",
+  negative_number: "Negative Number",
+  non_positive_number: "Non Positive Number",
+
+  integer: "Integer",
+  safe_integer: "Safe Integer",
+
+  positive_integer: "Positive Integer",
+  non_negative_integer: "Non Negative Integer",
+
+  negative_integer: "Negative Integer",
+  non_positive_integer: "Non Positive Integer",
+
+  "8bit_integer": "8 Bit Integer",
+  "8bit_unsigned_integer": "8 Bit Unsigned Integer",
+  "16bit_integer": "16 Bit Integer",
+  "16bit_unsigned_integer": "16 Bit Unsigned Integer",
+  "32bit_integer": "32 Bit Integer",
+  "32bit_unsigned_integer": "32 Bit Unsigned Integer",
+
+  non_empty_string: "Non-Empty String",
+
+  plain_object: "Plain Object",
+  non_null_object: "Non-Null Object",
+
+  array: "Array",
+  non_empty_array: "Non-Empty Array",
+
+  nan: "NaN",
   any: "Any",
   nullish: "Nullish",
-
-  // Constants
-  undefined: "Undefined",
-  null: "Null",
-  true: "True",
-  false: "False",
-  NaN: "NaN",
+  non_nullish: "Non-Nullish",
 };
 
-type ReadonlyTypes = Readonly<Types> & {
-  [key: string]: (v: unknown) => boolean;
-};
-const frozenTypeObject = Object.freeze(types) as ReadonlyTypes;
-typeNames = Object.freeze(typeNames);
+const frozenTypeObject = Object.freeze(types) as Readonly<Types>;
+const frozenTypeNames = Object.freeze(typeNames);
 
-export { frozenTypeObject as types };
-export { typeNames };
+export { frozenTypeObject as types, frozenTypeNames as typeNames };
