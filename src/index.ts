@@ -35,7 +35,7 @@ type NullableObjectPredicate = TypePredicate<object | null, "object">;
 
 type NullishValue = undefined | null;
 
-interface Types {
+export interface HandyTypes_Interface {
   // Base types
   undefined: TypePredicate<undefined, "undefined">;
   boolean: TypePredicate<boolean, "boolean">;
@@ -89,180 +89,190 @@ interface Types {
   nan: TypePredicate<typeof NaN, "other">;
   nullish: TypePredicate<NullishValue, "other">;
   non_nullish: {
-    (v: AllBasicTypes): v is Exclude<AllBasicTypes, NullishValue>;
+    (v: unknown): v is Exclude<AllBasicTypes, NullishValue>;
     category: "other";
   };
 }
 
-const types: Partial<Types> = {};
+const handyTypes: Partial<HandyTypes_Interface> = {};
 
 // Implementation -------------------------------------------------------------
-types.undefined = Object.assign(
+handyTypes.undefined = Object.assign(
   (v: unknown): v is undefined => typeof v === "undefined",
   { category: "undefined" } as const
 );
 
-types.number = Object.assign(
+handyTypes.number = Object.assign(
   (v: unknown): v is number => typeof v === "number" && !Number.isNaN(v),
   { category: "number" } as const
 );
-types.positive_number = Object.assign(
-  (v: unknown): v is number => types.number!(v) && v > 0,
+handyTypes.positive_number = Object.assign(
+  (v: unknown): v is number => handyTypes.number!(v) && v > 0,
   { category: "number" } as const
 );
 
-types.non_negative_number = Object.assign(
-  (v: unknown): v is number => types.number!(v) && v >= 0,
+handyTypes.non_negative_number = Object.assign(
+  (v: unknown): v is number => handyTypes.number!(v) && v >= 0,
   { category: "number" } as const
 );
 
-types.negative_number = Object.assign(
-  (v: unknown): v is number => types.number!(v) && v < 0,
+handyTypes.negative_number = Object.assign(
+  (v: unknown): v is number => handyTypes.number!(v) && v < 0,
   { category: "number" } as const
 );
 
-types.non_positive_number = Object.assign(
-  (v: unknown): v is number => types.number!(v) && v <= 0,
+handyTypes.non_positive_number = Object.assign(
+  (v: unknown): v is number => handyTypes.number!(v) && v <= 0,
   { category: "number" } as const
 );
 
-types.finite_number = Object.assign(
+handyTypes.finite_number = Object.assign(
   (v: unknown): v is number => Number.isFinite(v),
   { category: "number" } as const
 );
 
 // Integer Types ===============
-types.integer = Object.assign(
+handyTypes.integer = Object.assign(
   (v: unknown): v is number => Number.isInteger(v),
   { category: "number" } as const
 );
-types.safe_integer = Object.assign(
+handyTypes.safe_integer = Object.assign(
   (v: unknown): v is number => Number.isSafeInteger(v),
   { category: "number" } as const
 );
 
-types.big_integer = Object.assign(
+handyTypes.big_integer = Object.assign(
   (v: unknown): v is BigInt => typeof v === "bigint",
   { category: "bigint" } as const
 );
 
-types.positive_integer = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v > 0,
+handyTypes.positive_integer = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v > 0,
   { category: "number" } as const
 );
 
-types.negative_integer = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v < 0,
+handyTypes.negative_integer = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v < 0,
   { category: "number" } as const
 );
 
-types.non_positive_integer = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v < 1,
+handyTypes.non_positive_integer = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v < 1,
   { category: "number" } as const
 );
 
-types.non_negative_integer = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= 0,
+handyTypes.non_negative_integer = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v >= 0,
   { category: "number" } as const
 );
 
 // byte wise integer
-types["8bit_integer"] = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= -128 && v <= 127,
+handyTypes["8bit_integer"] = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v >= -128 && v <= 127,
   { category: "number" } as const
 );
 
-types["8bit_unsigned_integer"] = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 255,
+handyTypes["8bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v >= 0 && v <= 255,
   { category: "number" } as const
 );
 
-types["16bit_integer"] = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= -32768 && v <= 32767,
-  { category: "number" } as const
-);
-
-types["16bit_unsigned_integer"] = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 65535,
-  { category: "number" } as const
-);
-
-types["32bit_integer"] = Object.assign(
+handyTypes["16bit_integer"] = Object.assign(
   (v: unknown): v is number =>
-    types.integer!(v) && v >= -2147483648 && v <= 2147483647,
+    handyTypes.integer!(v) && v >= -32768 && v <= 32767,
   { category: "number" } as const
 );
 
-types["32bit_unsigned_integer"] = Object.assign(
-  (v: unknown): v is number => types.integer!(v) && v >= 0 && v <= 4294967295,
+handyTypes["16bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number => handyTypes.integer!(v) && v >= 0 && v <= 65535,
+  { category: "number" } as const
+);
+
+handyTypes["32bit_integer"] = Object.assign(
+  (v: unknown): v is number =>
+    handyTypes.integer!(v) && v >= -2147483648 && v <= 2147483647,
+  { category: "number" } as const
+);
+
+handyTypes["32bit_unsigned_integer"] = Object.assign(
+  (v: unknown): v is number =>
+    handyTypes.integer!(v) && v >= 0 && v <= 4294967295,
   { category: "number" } as const
 );
 
 // String Types ----------------------------------------------------------------
-types.string = Object.assign(
+handyTypes.string = Object.assign(
   (v: unknown): v is string => typeof v === "string",
   { category: "string" } as const
 );
-types.non_empty_string = Object.assign(
-  (v: unknown): v is string => types.string!(v) && v !== "",
+handyTypes.non_empty_string = Object.assign(
+  (v: unknown): v is string => handyTypes.string!(v) && v !== "",
   { category: "string" } as const
 );
 
 // Object Types ----------------------------------------------------------------
-types.object = Object.assign(
+handyTypes.object = Object.assign(
   (v: unknown): v is object | null => typeof v === "object",
   { category: "object" } as const
 );
-types.non_null_object = Object.assign(
-  (v: unknown): v is object => v !== null && types.object!(v),
+handyTypes.non_null_object = Object.assign(
+  (v: unknown): v is object => v !== null && handyTypes.object!(v),
   { category: "object" } as const
 );
-types.plain_object = Object.assign(
-  (v: unknown): v is object => types.non_null_object!(v) && !Array.isArray(v),
+handyTypes.plain_object = Object.assign(
+  (v: unknown): v is object =>
+    handyTypes.non_null_object!(v) && !Array.isArray(v),
   { category: "object" } as const
 );
 
 // Array Types -----------------------------------------------------------------
-types.array = Object.assign((v: unknown): v is unknown[] => Array.isArray(v), {
-  category: "array",
-} as const);
-types.non_empty_array = Object.assign(
-  (v: unknown): v is unknown[] => types.array!(v) && v.length > 0,
+handyTypes.array = Object.assign(
+  (v: unknown): v is unknown[] => Array.isArray(v),
+  {
+    category: "array",
+  } as const
+);
+handyTypes.non_empty_array = Object.assign(
+  (v: unknown): v is unknown[] => handyTypes.array!(v) && v.length > 0,
   { category: "array" } as const
 );
 
-types.function = Object.assign(
+handyTypes.function = Object.assign(
   (v: unknown): v is Function => typeof v === "function",
   { category: "function" } as const
 );
-types.symbol = Object.assign(
+handyTypes.symbol = Object.assign(
   (v: unknown): v is Symbol => typeof v === "symbol",
   { category: "symbol" } as const
 );
-types.boolean = Object.assign(
+handyTypes.boolean = Object.assign(
   (v: unknown): v is boolean => typeof v === "boolean",
   { category: "boolean" } as const
 );
 
-types.nan = Object.assign((v: unknown): v is typeof NaN => Number.isNaN(v), {
-  category: "other",
-} as const);
+handyTypes.nan = Object.assign(
+  (v: unknown): v is typeof NaN => Number.isNaN(v),
+  {
+    category: "other",
+  } as const
+);
 
 // Other Types  ----------------------------------------------------------------
-types.any = Object.assign((v: unknown): v is any => true, {
+handyTypes.any = Object.assign((v: unknown): v is any => true, {
   category: "other",
 } as const);
-types.nullish = Object.assign(
+handyTypes.nullish = Object.assign(
   (v: unknown): v is NullishValue => v === undefined || v === null,
   { category: "other" } as const
 );
-types.non_nullish = Object.assign(
-  (v: unknown): v is Exclude<AllBasicTypes, NullishValue> => !types.nullish!(v),
+handyTypes.non_nullish = Object.assign(
+  (v: unknown): v is Exclude<AllBasicTypes, NullishValue> =>
+    !handyTypes.nullish!(v),
   { category: "other" } as const
 );
 
 // ---------------------------- Type Names -------------------------------------
-type TypeNames = Readonly<Record<keyof Types, string>>;
+type TypeNames = Readonly<Record<keyof HandyTypes_Interface, string>>;
 
 const typeNames: TypeNames = {
   // Base Types
@@ -313,7 +323,9 @@ const typeNames: TypeNames = {
   non_nullish: "Non-Nullish",
 };
 
-const frozenTypeObject = Object.freeze(types) as Readonly<Types>;
+const frozenTypeObject = Object.freeze(
+  handyTypes
+) as Readonly<HandyTypes_Interface>;
 const frozenTypeNames = Object.freeze(typeNames);
 
-export { frozenTypeObject as types, frozenTypeNames as typeNames };
+export { frozenTypeObject as handyTypes, frozenTypeNames as typeNames };

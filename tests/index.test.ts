@@ -1,4 +1,4 @@
-import { types, typeNames } from "../src";
+import { handyTypes, typeNames } from "../src";
 
 const testData = [
   // Number types ------------------------------
@@ -190,7 +190,7 @@ const testData = [
 
 type AllUsedTypesInTestData = typeof testData[number]["typeName"];
 type MissingTypesInTestData = Exclude<
-  keyof typeof types,
+  keyof typeof handyTypes,
   AllUsedTypesInTestData
 >;
 let _exhaustiveCheck_isAnyTestMissingInTestData: never =
@@ -198,7 +198,7 @@ let _exhaustiveCheck_isAnyTestMissingInTestData: never =
 _exhaustiveCheck_isAnyTestMissingInTestData;
 
 type TestDataItem = Readonly<{
-  typeName: keyof typeof types;
+  typeName: keyof typeof handyTypes;
   validValues: readonly any[];
   invalidValues: readonly any[];
 }>;
@@ -210,7 +210,7 @@ describe.each(testData)(
   "types.$typeName()",
   ({ typeName, validValues, invalidValues }) => {
     // @ts-ignore
-    const validator = types[<string>typeName];
+    const validator = handyTypes[<string>typeName];
 
     // for array we can't use use the it.each! why? see the jest doc for test.each
     if (typeName.endsWith("array")) {
@@ -244,10 +244,12 @@ describe.each(testData)(
 
 describe("Number of Properties", () => {
   test("types and typeName has equal number of props", () => {
-    expect(Object.keys(types)).toHaveLength(Object.keys(typeNames).length);
+    expect(Object.keys(handyTypes)).toHaveLength(Object.keys(typeNames).length);
   });
 
   test("typeNames has all the fullnames of types", () => {
-    expect(Object.keys(types).every((type) => type in typeNames)).toBeTruthy();
+    expect(
+      Object.keys(handyTypes).every((type) => type in typeNames)
+    ).toBeTruthy();
   });
 });
