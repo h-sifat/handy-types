@@ -1,63 +1,73 @@
 import { handyTypes, HandyTypes_Interface } from "./index";
+import { EPP } from "./util";
 
 type AllHandyTypes = keyof HandyTypes_Interface;
 
 export default function is<Type>(schema: string, value: any): value is Type {
+  // if the schema is already a handy-type then we don't have to check
+  // whether it's a union or array schema.
+  if (schema in handyTypes) return handyTypes[schema as AllHandyTypes](value);
+
+  // it's a union schema
   if (schema.includes("|")) {
-    const unionSchemaElements = schema
-      .split("|")
-      .map((unionSchema) => unionSchema.trim());
+    const subSchemas = schema.split("|").map((subSchema) => subSchema.trim());
 
-    for (let index = 0; index < unionSchemaElements.length; index++) {
-      const _schema = unionSchemaElements[index];
-
-      try {
-        if (is(_schema, value)) return true;
-      } catch (ex: any) {
-        if ((ex.code = "INVALID_HANDY_TYPE")) {
-          const error = new Error(
-            `Invalid schema ("${_schema}") at position ${
-              index + 1
-            } in union schema "${schema}".`
-          );
-          // @ts-ignore
-          error.code = "INVALID_UNION_SCHEMA";
-          throw error;
-        }
-
-        throw ex;
-      }
-    }
-    return false;
+    return validateUnion({ subSchemas, value });
   }
 
+  // it's an array schema
   if (schema.endsWith("[]")) {
     const type = schema.slice(0, -2); // remove "[]"
 
-    assertValidHandyType(type);
-    return validateArray({ array: value, elementType: type });
+    return validateArray({ array: value, elementType: type as AllHandyTypes });
   }
 
-  assertValidHandyType(schema);
-
-  return handyTypes[schema](value);
+  throw new EPP(`Invalid handy-type: "${schema}".`, "INVALID_HANDY_TYPE");
 }
 
-function assertValidHandyType(type: string): asserts type is AllHandyTypes {
-  if (!(type in handyTypes)) {
-    const error = new Error(`Invalid handy type: "${type}"`);
-    // @ts-ignore
-    error.code = "INVALID_HANDY_TYPE";
-    throw error;
+export function assertValidHandyType(
+  type: string
+): asserts type is AllHandyTypes {
+  if (!(type in handyTypes))
+    throw new EPP(`Invalid handy type: "${type}"`, "INVALID_HANDY_TYPE");
+}
+
+// -------------- validateUnion ---------------------------------
+interface validateUnionArgument {
+  subSchemas: string[];
+  value: unknown;
+}
+
+function validateUnion(arg: validateUnionArgument): boolean {
+  const { subSchemas, value } = arg;
+
+  for (let index = 0; index < subSchemas.length; index++) {
+    const subSchema = subSchemas[index];
+
+    try {
+      if (is(subSchema, value)) return true;
+    } catch (ex: any) {
+      const message = `Invalid sub schema ("${subSchema}") at position ${
+        index + 1
+      } in union schema "${subSchema}".`;
+
+      throw new EPP(message, "INVALID_UNION_SCHEMA");
+    }
   }
-}
 
-type ValidateArray_Argument = {
+  return false;
+}
+// -------------- validateArray ---------------------------------
+type ValidateArrayArgument = {
   array: unknown;
   elementType: AllHandyTypes;
 };
-function validateArray(arg: ValidateArray_Argument): boolean {
+
+function validateArray(arg: ValidateArrayArgument): boolean {
   const { array, elementType } = arg;
+
+  assertValidHandyType(elementType);
+
   if (!handyTypes.array(array)) return false;
 
   const isAnyElementInvalid = array.some(
