@@ -328,4 +328,6 @@ const frozenTypeObject = Object.freeze(
 ) as Readonly<HandyTypes_Interface>;
 const frozenTypeNames = Object.freeze(typeNames);
 
+export type AllHandyTypes = keyof HandyTypes_Interface;
+
 export { frozenTypeObject as handyTypes, frozenTypeNames as typeNames };

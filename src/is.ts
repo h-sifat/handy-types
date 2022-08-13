@@ -1,7 +1,5 @@
-import { handyTypes, HandyTypes_Interface } from "./index";
+import { handyTypes, AllHandyTypes } from "./index";
 import { EPP } from "./util";
-
-type AllHandyTypes = keyof HandyTypes_Interface;
 
 export default function is<Type>(schema: string, value: any): value is Type {
   // if the schema is already a handy-type then we don't have to check
