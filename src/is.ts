@@ -4,32 +4,48 @@ import { EPP, assertValidHandyType } from "./util";
 export default function is<Type>(schema: string, value: any): value is Type {
   // if the schema is already a handy-type then we don't have to check
   // whether it's a union or array schema.
-  if (schema in handyTypes) return handyTypes[schema as AllHandyTypes](value);
+  if (schema in handyTypes)
+    return validateBasicType({ type: schema as AllHandyTypes, value });
 
   // it's a union schema
   if (schema.includes("|")) {
     const subSchemas = schema.split("|").map((subSchema) => subSchema.trim());
 
-    return validateUnion({ subSchemas, value });
+    return validateUnionType({ subSchemas, value });
   }
 
   // it's an array schema
   if (schema.endsWith("[]")) {
-    const type = schema.slice(0, -2); // remove "[]"
+    const elementType = schema.slice(0, -2); // remove "[]"
+    assertValidHandyType(elementType);
 
-    return validateArray({ array: value, elementType: type as AllHandyTypes });
+    return validateArrayType({
+      array: value,
+      elementType: elementType as AllHandyTypes,
+    });
   }
 
   throw new EPP(`Invalid handy-type: "${schema}".`, "INVALID_HANDY_TYPE");
 }
 
-// -------------- validateUnion ---------------------------------
-interface validateUnionArgument {
+// -------------- validateBasicType ---------------------------------
+interface ValidateBasicTypeArgument {
+  type: AllHandyTypes;
+  value: unknown;
+}
+
+export function validateBasicType(arg: ValidateBasicTypeArgument): boolean {
+  const { type, value } = arg;
+  return handyTypes[type](value);
+}
+
+// -------------- validateUnionType ---------------------------------
+interface validateUnionTypeArgument {
   subSchemas: string[];
   value: unknown;
 }
 
-function validateUnion(arg: validateUnionArgument): boolean {
+function validateUnionType(arg: validateUnionTypeArgument): boolean {
   const { subSchemas, value } = arg;
 
   for (let index = 0; index < subSchemas.length; index++) {
@@ -48,16 +64,14 @@ function validateUnion(arg: validateUnionArgument): boolean {
 
   return false;
 }
-// -------------- validateArray ---------------------------------
-type ValidateArrayArgument = {
+// -------------- validateArrayType ---------------------------------
+type ValidateArrayTypeArgument = {
   array: unknown;
   elementType: AllHandyTypes;
 };
 
-function validateArray(arg: ValidateArrayArgument): boolean {
+export function validateArrayType(arg: ValidateArrayTypeArgument): boolean {
   const { array, elementType } = arg;
-
-  assertValidHandyType(elementType);
 
   if (!handyTypes.array(array)) return false;
 
