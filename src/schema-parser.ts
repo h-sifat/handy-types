@@ -18,7 +18,7 @@ interface UnionSchemaDefinition {
   subSchemas: UnionSubSchema[];
 }
 
-type SchemaDefinition = UnionSubSchema | UnionSchemaDefinition;
+export type SchemaDefinition = UnionSubSchema | UnionSchemaDefinition;
 
 export default function schemaParser(schema: string): SchemaDefinition {
   if (schema.includes("|")) {
