@@ -2,7 +2,7 @@ import parseSchema, { SchemaDefinition } from "./schema-parser";
 import validate from "./schemawise-validator";
 import { handyTypes } from "./types";
 
-interface ErrorInformation {
+export interface ErrorInformation {
   name?: string;
   message?: string;
   code?: string | number;
@@ -15,8 +15,15 @@ export default function assert<Type>(
   errorInfo: ErrorInformation = {}
 ): asserts value is Type {
   const schemaDefinition = parseSchema(schema);
-  const isValid = validate({ schema: schemaDefinition, value });
+  schemaWiseAssert(schemaDefinition, value, errorInfo);
+}
 
+export function schemaWiseAssert<Type>(
+  schemaDefinition: SchemaDefinition,
+  value: unknown,
+  errorInfo: ErrorInformation = {}
+): asserts value is Type {
+  const isValid = validate({ schema: schemaDefinition, value });
   if (!isValid) throw generateError({ schemaDefinition, errorInfo });
 }
 
