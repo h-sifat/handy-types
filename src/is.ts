@@ -1,5 +1,5 @@
 import { handyTypes, AllHandyTypes } from "./index";
-import { EPP } from "./util";
+import { EPP, assertValidHandyType } from "./util";
 
 export default function is<Type>(schema: string, value: any): value is Type {
   // if the schema is already a handy-type then we don't have to check
@@ -21,13 +21,6 @@ export default function is<Type>(schema: string, value: any): value is Type {
   }
 
   throw new EPP(`Invalid handy-type: "${schema}".`, "INVALID_HANDY_TYPE");
-}
-
-export function assertValidHandyType(
-  type: string
-): asserts type is AllHandyTypes {
-  if (!(type in handyTypes))
-    throw new EPP(`Invalid handy type: "${type}"`, "INVALID_HANDY_TYPE");
 }
 
 // -------------- validateUnion ---------------------------------

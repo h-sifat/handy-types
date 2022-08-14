@@ -1,6 +1,5 @@
 import { handyTypes, AllHandyTypes } from ".";
-import { assertValidHandyType } from "./is";
-import { EPP } from "./util";
+import { EPP, assertValidHandyType } from "./util";
 
 interface BasicSchemaDefinition {
   schemaType: "basic";
@@ -23,11 +22,10 @@ type SchemaDefinition = UnionSubSchema | UnionSchemaDefinition;
 
 export default function schemaParser(schema: string): SchemaDefinition {
   if (schema.includes("|")) {
-    // @ts-ignore
     const subSchemas = schema
       .split("|")
       .map((subSchema) => subSchema.trim())
-      .map((subSchema) => schemaParser(subSchema));
+      .map(schemaParser);
 
     return { schemaType: "union", subSchemas: subSchemas as UnionSubSchema[] };
   }
