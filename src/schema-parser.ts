@@ -1,4 +1,4 @@
-import { handyTypes, AllHandyTypes } from ".";
+import { handyTypes, AllHandyTypes } from "./types";
 import { EPP, assertValidHandyType } from "./util";
 
 interface BasicSchemaDefinition {
@@ -20,12 +20,12 @@ interface UnionSchemaDefinition {
 
 export type SchemaDefinition = UnionSubSchema | UnionSchemaDefinition;
 
-export default function schemaParser(schema: string): SchemaDefinition {
+export default function parseSchema(schema: string): SchemaDefinition {
   if (schema.includes("|")) {
     const subSchemas = schema
       .split("|")
       .map((subSchema) => subSchema.trim())
-      .map(schemaParser);
+      .map(parseSchema);
 
     return { schemaType: "union", subSchemas: subSchemas as UnionSubSchema[] };
   }
@@ -34,7 +34,7 @@ export default function schemaParser(schema: string): SchemaDefinition {
     const elementType = schema.slice(0, -2); // remove "[]"
     assertValidHandyType(elementType);
 
-    return { schemaType: "array", elementType };
+    return { schemaType: "array", elementType: elementType as AllHandyTypes };
   }
 
   if (schema in handyTypes)

@@ -1,4 +1,4 @@
-import { handyTypes, AllHandyTypes } from "./index";
+import { handyTypes, AllHandyTypes } from "./types";
 
 export class EPP extends Error {
   constructor(message: string, public code: string) {

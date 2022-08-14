@@ -1,4 +1,4 @@
-import schemaParser from "../src/schema-parser";
+import parseSchema from "../src/schema-parser";
 
 describe("input/output", () => {
   it.each([
@@ -21,7 +21,7 @@ describe("input/output", () => {
       },
     },
   ])(`schemaParser("$schema") = $parsedSchema`, ({ schema, parsedSchema }) => {
-    expect(schemaParser(schema)).toEqual(parsedSchema);
+    expect(parseSchema(schema)).toEqual(parsedSchema);
   });
 });
 
@@ -32,7 +32,7 @@ describe("schemaValidation", () => {
       expect.assertions(1);
 
       try {
-        schemaParser(schema);
+        parseSchema(schema);
       } catch (ex: any) {
         expect(ex.code).toBe(errorCode);
       }

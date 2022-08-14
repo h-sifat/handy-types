@@ -1,4 +1,4 @@
-import { handyTypes, typeNames } from "../src";
+import { handyTypes, typeNames } from "../src/types";
 
 const testData = [
   // Number types ------------------------------

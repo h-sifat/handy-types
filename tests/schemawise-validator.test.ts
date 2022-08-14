@@ -1,4 +1,4 @@
-import schemaParser from "../src/schema-parser";
+import parseSchema from "../src/schema-parser";
 import validate from "../src/schemawise-validator";
 
 describe("Validation", () => {
@@ -26,7 +26,7 @@ describe("Validation", () => {
   ])(
     `validate({schema: schemaParser("$schema"), value: $value}) === $expectedResult`,
     ({ schema, value, expectedResult }) => {
-      const parsedSchema = schemaParser(schema);
+      const parsedSchema = parseSchema(schema);
       expect(validate({ schema: parsedSchema, value })).toBe(expectedResult);
     }
   );

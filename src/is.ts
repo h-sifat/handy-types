@@ -1,4 +1,4 @@
-import { handyTypes, AllHandyTypes } from "./index";
+import { handyTypes, AllHandyTypes } from "./types";
 import { EPP, assertValidHandyType } from "./util";
 
 export default function is<Type>(schema: string, value: any): value is Type {
