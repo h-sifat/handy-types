@@ -1,4 +1,4 @@
-import { handyTypes, typeNames } from "../src/types";
+import { allTypeCategories, handyTypes, typeNames } from "../src/types";
 
 const testData = [
   // Number types ------------------------------
@@ -251,5 +251,19 @@ describe("Number of Properties", () => {
     expect(
       Object.keys(handyTypes).every((type) => type in typeNames)
     ).toBeTruthy();
+  });
+});
+
+describe("Other", () => {
+  test("every handyTypes function has a category associated with it", () => {
+    const doesEveryTypeHasACategory = Object.values(handyTypes).reduce(
+      (result, type) => {
+        return (result &&=
+          typeof type.category === "string" &&
+          allTypeCategories.includes(type.category));
+      },
+      true
+    );
+    expect(doesEveryTypeHasACategory).toBeTruthy();
   });
 });

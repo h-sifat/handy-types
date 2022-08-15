@@ -9,7 +9,7 @@ type AllBasicTypes =
   | null // I know that null is not a type
   | Function;
 
-const allTypeCategories = Object.freeze([
+export const allTypeCategories = Object.freeze([
   "undefined",
   "boolean",
   "number",
