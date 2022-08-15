@@ -2,7 +2,7 @@ import parseSchema from "../src/schema-parser";
 import validate from "../src/schemawise-validator";
 
 describe("Validation", () => {
-  it.each([
+  it.concurrent.each([
     {
       schema: "string",
       value: "a string",

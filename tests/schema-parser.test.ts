@@ -2,7 +2,7 @@ import parseSchema from "../src/schema-parser";
 import { typeNames } from "../src/types";
 
 describe("input/output", () => {
-  it.each([
+  it.concurrent.each([
     {
       schema: "number",
       parsedSchema: {
@@ -44,7 +44,7 @@ describe("input/output", () => {
 });
 
 describe("schemaValidation", () => {
-  it.each([{ schema: "duck", errorCode: "INVALID_HANDY_TYPE" }])(
+  it.concurrent.each([{ schema: "duck", errorCode: "INVALID_HANDY_TYPE" }])(
     `throws error with code: "$errorCode" for schema: "$schema"`,
     ({ schema, errorCode }) => {
       expect.assertions(1);

@@ -20,7 +20,7 @@ describe("generateError", () => {
     schemaName: "Number",
     type: "number",
   });
-  it.each([
+  it.concurrent.each([
     {
       schemaDefinition,
       errorInfo: { message: "_em_" },
