@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es2015"],
-    "module": "umd",
+    "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
     "outDir": "./dist",
@@ -12,5 +12,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
+  "include": ["./src/*"],
   "exclude": ["./tests/*", "./dist/*"]
 }
