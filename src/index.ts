@@ -1,10 +1,10 @@
 import _is from "./is";
 import { makeCacheStore } from "./util";
-import { handyTypes, typeNames } from "./types";
 import type { ErrorInformation } from "./assert";
 import schemaWiseIs from "./schemawise-validator";
 import _assert, { schemaWiseAssert } from "./assert";
 import parseSchema, { SchemaDefinition } from "./schema-parser";
+import { handyTypes, typeNames, allTypeCategories } from "./types";
 
 interface Is {
   <Type>(schema: string, value: unknown): value is Type;
@@ -63,7 +63,14 @@ Object.freeze(assert);
 
 // -------------- exports --------------------------
 
-export { is, assert, handyTypes, typeNames, publicCacheInterface as cache };
+export {
+  is,
+  assert,
+  typeNames,
+  handyTypes,
+  allTypeCategories,
+  publicCacheInterface as cache,
+};
 
 // -------------- utility --------------------------
 interface GetSchemaDefinitionArgument {
