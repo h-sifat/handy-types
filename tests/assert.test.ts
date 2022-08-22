@@ -62,6 +62,15 @@ describe("generateError", () => {
     },
     {
       schemaDefinition,
+      expectedResult: {
+        message: generateErrorMessage({
+          schemaName: schemaDefinition.schemaName,
+        }),
+      },
+      case: "should assign otherErrorInfo to the error if provided",
+    },
+    {
+      schemaDefinition,
       errorInfo: {
         message: "_em_",
         otherInfo: { name: "duck", message: "_new_message_", code: "_code_" },

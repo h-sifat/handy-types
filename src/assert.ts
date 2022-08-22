@@ -29,11 +29,11 @@ export function schemaWiseAssert<Type>(
 
 interface GenerateErrorArgument {
   schemaDefinition: SchemaDefinition;
-  errorInfo: ErrorInformation;
+  errorInfo?: ErrorInformation;
 }
 
 export function generateError(arg: GenerateErrorArgument): Error {
-  const { schemaDefinition, errorInfo } = arg;
+  const { schemaDefinition, errorInfo = {} } = arg;
 
   const errorMessage =
     "message" in errorInfo

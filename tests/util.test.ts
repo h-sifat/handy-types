@@ -1,5 +1,5 @@
 import parseSchema from "../src/schema-parser";
-import { makeCacheStore } from "../src/util";
+import { assertValidHandyType, EPP, makeCacheStore } from "../src/util";
 
 describe("makeCacheStore", () => {
   const { publicInterface, privateInterface } = makeCacheStore();
@@ -42,5 +42,33 @@ describe("makeCacheStore", () => {
       publicInterface.clear();
       expect(publicInterface.size).toBe(0);
     });
+  });
+});
+
+describe("EPP", () => {
+  it("adds an error code in the error object", () => {
+    const message = "oops!";
+    const code = "ERR_CODE";
+    const error = new EPP(message, code);
+
+    expect(error).toHaveProperty("message", message);
+    expect(error).toHaveProperty("code", code);
+  });
+});
+
+describe("assertValidHandyType", () => {
+  it("throws error if the given schema is not a handy type", () => {
+    expect.assertions(1);
+    try {
+      assertValidHandyType("duck");
+    } catch (ex: any) {
+      expect(ex.code).toBe("INVALID_SCHEMA");
+    }
+  });
+
+  it("does not throw an error if the given schema is a valid handy type", () => {
+    expect(() => {
+      assertValidHandyType("integer");
+    }).not.toThrow(Error);
   });
 });

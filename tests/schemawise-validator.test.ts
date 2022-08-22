@@ -30,4 +30,14 @@ describe("Validation", () => {
       expect(validate({ schema: parsedSchema, value })).toBe(expectedResult);
     }
   );
+
+  it("throws error if schema type is invalid", () => {
+    expect.assertions(1);
+    try {
+      // @ts-ignore
+      validate({ schema: { schemaType: "unknown_schema_type" }, value: "hi" });
+    } catch (ex: any) {
+      expect(ex.code).toBe("INTERNAL_ERROR_INVALID_SCHEMA");
+    }
+  });
 });
