@@ -20,6 +20,14 @@ describe("input/output", () => {
       },
     },
     {
+      schema: "    string[]", // some whitespace at the beginning
+      parsedSchema: {
+        schemaType: "array",
+        elementType: "string",
+        schemaName: "Array of String",
+      },
+    },
+    {
       schema: "string[] | number",
       parsedSchema: {
         schemaType: "union",
@@ -44,12 +52,17 @@ describe("input/output", () => {
 });
 
 describe("schemaValidation", () => {
-  it.concurrent.each([{ schema: "duck", errorCode: "INVALID_HANDY_TYPE" }])(
+  it.concurrent.each([
+    { schema: "duck", errorCode: "INVALID_SCHEMA" },
+    { schema: { msg: "not_a_string" }, errorCode: "INVALID_SCHEMA" },
+    { schema: 23423, errorCode: "INVALID_SCHEMA" },
+  ])(
     `throws error with code: "$errorCode" for schema: "$schema"`,
     ({ schema, errorCode }) => {
       expect.assertions(1);
 
       try {
+        // @ts-ignore
         parseSchema(schema);
       } catch (ex: any) {
         expect(ex.code).toBe(errorCode);

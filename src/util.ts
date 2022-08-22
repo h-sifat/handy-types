@@ -11,7 +11,7 @@ export function assertValidHandyType(
   type: string
 ): asserts type is AllHandyTypes {
   if (!(type in handyTypes))
-    throw new EPP(`Invalid handy type: "${type}"`, "INVALID_HANDY_TYPE");
+    throw new EPP(`Invalid handy type: "${type}"`, "INVALID_SCHEMA");
 }
 
 export function makeCacheStore() {

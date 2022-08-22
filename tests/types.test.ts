@@ -247,7 +247,7 @@ describe("Number of Properties", () => {
     expect(Object.keys(handyTypes)).toHaveLength(Object.keys(typeNames).length);
   });
 
-  test("typeNames has all the fullnames of types", () => {
+  test("typeNames has all the full names of types", () => {
     expect(
       Object.keys(handyTypes).every((type) => type in typeNames)
     ).toBeTruthy();

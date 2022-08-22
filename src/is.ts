@@ -2,6 +2,10 @@ import { handyTypes, AllHandyTypes } from "./types";
 import { EPP, assertValidHandyType } from "./util";
 
 export default function is<Type>(schema: string, value: any): value is Type {
+  if (!handyTypes.non_empty_string(schema))
+    throw new EPP(`Invalid schema: ${schema}`, "INVALID_SCHEMA");
+
+  schema = schema.trim();
   // if the schema is already a handy-type then we don't have to check
   // whether it's a union or array schema.
   if (schema in handyTypes)
@@ -25,7 +29,7 @@ export default function is<Type>(schema: string, value: any): value is Type {
     });
   }
 
-  throw new EPP(`Invalid handy-type: "${schema}".`, "INVALID_HANDY_TYPE");
+  throw new EPP(`Invalid handy-type: "${schema}".`, "INVALID_SCHEMA");
 }
 
 // -------------- validateBasicType ---------------------------------
@@ -58,7 +62,7 @@ function validateUnionType(arg: validateUnionTypeArgument): boolean {
         index + 1
       } in union schema "${subSchema}".`;
 
-      throw new EPP(message, "INVALID_UNION_SCHEMA");
+      throw new EPP(message, "INVALID_SCHEMA");
     }
   }
 

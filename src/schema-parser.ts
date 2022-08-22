@@ -24,6 +24,11 @@ interface UnionSchemaDefinition {
 export type SchemaDefinition = UnionSubSchema | UnionSchemaDefinition;
 
 export default function parseSchema(schema: string): SchemaDefinition {
+  if (!handyTypes.non_empty_string(schema))
+    throw new EPP(`Invalid schema: ${schema}`, "INVALID_SCHEMA");
+
+  schema = schema.trim();
+
   if (schema.includes("|")) {
     const subSchemas = schema
       .split("|")
@@ -55,5 +60,5 @@ export default function parseSchema(schema: string): SchemaDefinition {
       schemaName: typeNames[schema as AllHandyTypes],
     };
 
-  throw new EPP(`Invalid handy type: "${schema}".`, "INVALID_HANDY_TYPE");
+  throw new EPP(`Invalid handy type: "${schema}".`, "INVALID_SCHEMA");
 }

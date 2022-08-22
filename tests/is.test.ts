@@ -8,12 +8,17 @@ describe("Validation", () => {
       result: false,
     },
     {
+      type: "string ", // with a whitespace at the end
+      value: 23,
+      result: false,
+    },
+    {
       type: "string",
       value: "a string",
       result: true,
     },
     {
-      type: "string[]",
+      type: "  string[]   ",
       value: "not a string array",
       result: false,
     },
@@ -43,30 +48,19 @@ describe("Validation", () => {
 });
 
 describe("Error Handling", () => {
-  it("throws error if type is invalid", () => {
+  it.concurrent.each([
+    23,
+    { val: "non a string" },
+    "not_valid_handy_type",
+    "not_valid_handy_type[]",
+    "not_valid_handy_type[] | integer",
+  ])("throws error if schema (%p) is invalid", (schema) => {
     expect.assertions(1);
     try {
-      is("not_valid_handy_type", "value");
+      // @ts-ignore
+      is(schema, "value");
     } catch (ex: any) {
-      expect(ex.code).toBe("INVALID_HANDY_TYPE");
-    }
-  });
-
-  it("throws error if array element type is invalid", () => {
-    expect.assertions(1);
-    try {
-      is("not_valid_handy_type[]", "value");
-    } catch (ex: any) {
-      expect(ex.code).toBe("INVALID_HANDY_TYPE");
-    }
-  });
-
-  it("throws error if any element of union schema is invlaid", () => {
-    expect.assertions(1);
-    try {
-      is("not_valid_handy_type[] | integer", "value");
-    } catch (ex: any) {
-      expect(ex.code).toBe("INVALID_UNION_SCHEMA");
+      expect(ex.code).toBe("INVALID_SCHEMA");
     }
   });
 });
