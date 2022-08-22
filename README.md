@@ -1,5 +1,10 @@
 # Handy-Types
 
+![Module Type](https://img.shields.io/badge/Module%20Type-UMD-brightgreen)
+![Npm Version](https://img.shields.io/npm/v/handy-types)
+![GitHub Tag](https://img.shields.io/github/v/tag/h-sifat/handy-types)
+![GitHub Issues](https://img.shields.io/github/issues/h-sifat/handy-types)
+
 A simple and lite weight validation library to reduce boilerplate in your
 JavaScript / TypeScript validation code.
 
@@ -7,7 +12,8 @@ It consists of many utility type predicate functions like `"integer"`,
 `"positive_integer"`, `"non_empty_string"`, `"plain_object"` and so on. Still
 not impressed? How about `"string[]"` to represent a string array or
 `"non_empty_string | non_empty_string[]"` to represent a non empty string or an
-array of non empty string(s)? TypeScript type annotation is also supported.
+array of non empty string(s)? TypeScript type annotation is also supported. The
+library is fully tested and has __100%__ test coverage.
 
 ## Importing
 
@@ -85,6 +91,8 @@ interface Is {
 The reason it's a generic function with a type parameter named `Type` is to
 support typescript type annotation. For example:
 
+#### TypeScript Example
+
 ```ts
 let value: unknown;
 
@@ -116,14 +124,37 @@ Here in the if block the type of `value` variable will be set to
 2. `handyTypes.integer(value)` doesn't seem intuitive because most of the time
    a predicate function starts with the word **is** as a convention.
 
+#### JavaScript Example
+
+For JavaScript just remove the generic type argument.
+
+```js
+const hobbies = "programming";
+if (is("non_empty_string | non_empty_string[]", hobbies)) {
+  hobbies;
+  // so `hobbies` is either a non_empty_string or a
+  // non_empty_string array
+}
+```
+
 ### Usages of `is.cache()`
 
 Use the `is.cache()` function instead of `is` for **array** and **union**
 schemas to improve performance. It will parse and cache the schema so that it
 doesn't have to waste time parsing the same schema again and again.
 
+#### TypeScript Example
+
 ```ts
 if (is.cache<string | string[]>("string | string[]", value)) {
+  value; // here value is of type: string | string[]
+}
+```
+
+#### JavaScript Example
+
+```ts
+if (is.cache("string | string[]", value)) {
   value; // here value is of type: string | string[]
 }
 ```
