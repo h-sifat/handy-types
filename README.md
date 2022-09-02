@@ -13,7 +13,7 @@ It consists of many utility type predicate functions like `"integer"`,
 not impressed? How about `"string[]"` to represent a string array or
 `"non_empty_string | non_empty_string[]"` to represent a non empty string or an
 array of non empty string(s)? TypeScript type annotation is also supported. The
-library is fully tested and has __100%__ test coverage.
+library is fully tested and has **100%** test coverage.
 
 ## Importing
 
@@ -275,16 +275,16 @@ object.
 
 ### Base Types
 
-| Type Name   | Full Name   | Implementation                                         |
-| ----------- | ----------- | ------------------------------------------------------ |
-| boolean     | Boolean     | `typeof value === "boolean"`                           |
-| symbol      | Symbol      | `typeof value === "symbol"`                            |
-| string      | String      | `typeof value === "string"`                            |
-| object      | Object      | `typeof value === "object"`                            |
-| big_integer | Big Integer | `typeof value === "bigint"`                            |
-| function    | Function    | `typeof value === "function"`                          |
-| undefined   | Undefined   | `typeof value === "undefined"`                         |
-| **number**  | Number      | `typeof value === "number" && && !Number.isNaN(value)` |
+| Type Name   | Full Name   | Implementation                                      |
+| ----------- | ----------- | --------------------------------------------------- |
+| boolean     | Boolean     | `typeof value === "boolean"`                        |
+| symbol      | Symbol      | `typeof value === "symbol"`                         |
+| string      | String      | `typeof value === "string"`                         |
+| object      | Object      | `typeof value === "object"`                         |
+| big_integer | Big Integer | `typeof value === "bigint"`                         |
+| function    | Function    | `typeof value === "function"`                       |
+| undefined   | Undefined   | `typeof value === "undefined"`                      |
+| **number**  | Number      | `typeof value === "number" && !Number.isNaN(value)` |
 
 **Note:** The type `number` is not just `typeof value === "number"`!
 
