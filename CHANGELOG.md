@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.0
+
+- Add `trimmed_non_empty_string` type
+
 ## v2.0.0
 
 - Remove unnecessary handy types such as "empty_string", "empty_array" and so on
