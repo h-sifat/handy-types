@@ -22,7 +22,10 @@ export const allTypeCategories = Object.freeze([
   "bigint",
 ] as const);
 
-type TypePredicate<Type, Category extends typeof allTypeCategories[number]> = {
+type TypePredicate<
+  Type,
+  Category extends (typeof allTypeCategories)[number]
+> = {
   (v: unknown): v is Type;
   category: Category;
 };
@@ -75,6 +78,7 @@ export interface HandyTypes_Interface {
 
   // String types
   non_empty_string: StringPredicate;
+  trimmed_non_empty_string: StringPredicate;
 
   // Array Types
   array: ArrayPredicate;
@@ -210,6 +214,11 @@ handyTypes.non_empty_string = Object.assign(
   { category: "string" } as const
 );
 
+handyTypes.trimmed_non_empty_string = Object.assign(
+  (v: unknown): v is string => handyTypes.string!(v) && !!v.trim().length,
+  { category: "string" } as const
+);
+
 // Object Types ----------------------------------------------------------------
 handyTypes.object = Object.assign(
   (v: unknown): v is object | null => typeof v === "object",
@@ -310,6 +319,7 @@ const typeNames: TypeNames = {
   "32bit_unsigned_integer": "32 Bit Unsigned Integer",
 
   non_empty_string: "Non-Empty String",
+  trimmed_non_empty_string: "Non-Empty String (trimmed)",
 
   plain_object: "Plain Object",
   non_null_object: "Non-Null Object",

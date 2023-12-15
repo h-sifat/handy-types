@@ -112,6 +112,11 @@ const testData = [
     validValues: ["a", "bcd"],
     invalidValues: [""],
   },
+  {
+    typeName: "trimmed_non_empty_string",
+    validValues: ["  a ", "  bcd  "],
+    invalidValues: ["  ", "\n\n\n", "\n\r\n", "\f "],
+  },
 
   // Object types ---------------------------------
   {
@@ -188,7 +193,7 @@ const testData = [
 
 // --------------- [Not related to tests]-----------------------------------
 
-type AllUsedTypesInTestData = typeof testData[number]["typeName"];
+type AllUsedTypesInTestData = (typeof testData)[number]["typeName"];
 type MissingTypesInTestData = Exclude<
   keyof typeof handyTypes,
   AllUsedTypesInTestData
