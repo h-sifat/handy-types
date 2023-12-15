@@ -336,9 +336,10 @@ object.
 
 ### String Types
 
-| Type Name        | Full Name        | Implementation                              |
-| ---------------- | ---------------- | ------------------------------------------- |
-| non_empty_string | Non-Empty String | `typeof value === "string" && value !== ""` |
+| Type Name                | Full Name                  | Implementation                                       |
+| ------------------------ | -------------------------- | ---------------------------------------------------- |
+| non_empty_string         | Non-Empty String           | `typeof value === "string" && value !== ""`          |
+| trimmed_non_empty_string | Non-Empty String (trimmed) | `typeof value === "string" && !!value.trim().length` |
 
 ### Other Types
 
